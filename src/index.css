@@ -1,0 +1,6 @@
+/* Minimal base styles - main styling in App.css */
+
+/* Ensure root takes full height */
+html, body, #root {
+  height: 100%;
+}
