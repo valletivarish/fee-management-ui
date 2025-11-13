@@ -262,9 +262,7 @@ const DashboardOverview = ({ stats, loading, onNavigate }) => {
 
   return (
     <div className="dashboard-overview">
-      {/* Stats Grid */}
       
-
       {/* Quick Actions */}
       <Card>
         <CardHeader>

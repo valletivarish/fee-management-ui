@@ -185,8 +185,8 @@ const FeePlansPage = ({ onBack }) => {
               <div className="fee-plan-top">
                 <div className="fee-plan-heading">
                   <h3 className="fee-plan-title">{plan.course}</h3>
-                  <div className="fee-plan-year">
-                    <Calendar className="w-4 h-4" />
+                    <div className="fee-plan-year">
+                      <Calendar className="w-4 h-4" />
                     <span>{plan.academicYear}</span>
                   </div>
                 </div>
@@ -221,31 +221,31 @@ const FeePlansPage = ({ onBack }) => {
               </div>
 
               <div className="fee-plan-footer">
-                <div className="fee-plan-actions">
-                  <button 
-                    className="action-btn view"
-                    onClick={() => {
-                      setViewingFeePlan(plan)
-                      setShowModal(true)
-                    }}
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button 
-                    className="action-btn edit"
-                    onClick={() => {
-                      setEditingFeePlan(plan)
-                      setShowModal(true)
-                    }}
-                  >
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button 
-                    className="action-btn delete"
-                    onClick={() => handleDeleteFeePlan(plan.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+              <div className="fee-plan-actions">
+                <button 
+                  className="action-btn view"
+                  onClick={() => {
+                    setViewingFeePlan(plan)
+                    setShowModal(true)
+                  }}
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+                <button 
+                  className="action-btn edit"
+                  onClick={() => {
+                    setEditingFeePlan(plan)
+                    setShowModal(true)
+                  }}
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+                <button 
+                  className="action-btn delete"
+                  onClick={() => handleDeleteFeePlan(plan.id)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
                 </div>
               </div>
             </div>
