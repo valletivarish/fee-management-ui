@@ -18,6 +18,7 @@ import AssignmentsPage from './admin/AssignmentsPage'
 import PaymentsPage from './admin/PaymentsPage'
 import { studentAPI, feePlanAPI, studentFeeAPI } from '../services/api'
 import { formatCurrency, formatDate } from '../lib/utils'
+import { useAuth } from '../contexts/AuthContext'
 
 const metricMeta = {
   'Total Students': {
@@ -43,6 +44,7 @@ const metricMeta = {
 }
 
 const AdminDashboard = ({ onBack }) => {
+  const { token } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -64,8 +66,11 @@ const AdminDashboard = ({ onBack }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!token) {
+      return
+    }
     fetchDashboardStats()
-  }, [])
+  }, [token])
 
   const fetchDashboardStats = async () => {
     try {

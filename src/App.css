@@ -179,6 +179,24 @@ body {
   gap: clamp(20px, 2vw, 28px);
 }
 
+.login-hero__notice {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: rgba(59, 130, 246, 0.12);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.9rem;
+  color: rgba(15, 23, 42, 0.85);
+  line-height: 1.5;
+}
+
+.login-hero__notice code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  background: rgba(15, 23, 42, 0.08);
+  padding: 0 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
 .login-hero__highlights {
   list-style: none;
   margin: 0;
@@ -595,6 +613,16 @@ body {
   cursor: not-allowed;
 }
 
+.login-button.secondary {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.login-button.secondary:hover:not(:disabled) {
+  background: var(--panel-hover);
+}
+
 .login-role-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -613,6 +641,424 @@ body {
   .login-button:hover:not(:disabled) {
     transform: none;
     box-shadow: none;
+  }
+}
+
+/* ========================================================================
+   New FM login experience (namespaced to fm-*)
+   ======================================================================== */
+
+.fm-layout-root {
+  min-height: 100vh;
+  background: #f4f7fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 5vw, 48px);
+}
+
+.fm-layout-grid {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 450px);
+  gap: clamp(32px, 4vw, 56px);
+  align-items: stretch;
+}
+
+.fm-hero-panel {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: clamp(28px, 3vw, 40px);
+  box-shadow: 0 32px 60px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2vw, 26px);
+}
+
+.fm-hero-media {
+  border-radius: 22px;
+  overflow: hidden;
+  background: #e0e9ff;
+}
+
+.fm-hero-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.fm-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2vw, 20px);
+}
+
+.fm-hero-tag {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.78rem;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.fm-hero-title {
+  margin: 0;
+  font-size: clamp(2rem, 2.4vw, 2.8rem);
+  color: #0f172a;
+}
+
+.fm-hero-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.fm-hero-password-info {
+  border-radius: 16px;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: rgba(37, 99, 235, 0.08);
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.fm-hero-password-info code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.1);
+}
+
+.fm-hero-feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fm-hero-feature-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: #f8fbff;
+}
+
+.fm-hero-feature-icon {
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.fm-hero-feature-copy strong {
+  display: block;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.fm-hero-feature-copy span {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.fm-auth-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fm-login-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: clamp(28px, 3vw, 36px);
+  box-shadow: 0 30px 50px rgba(15, 23, 42, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fm-login-header {
+  text-align: center;
+}
+
+.fm-login-title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #0f172a;
+}
+
+.fm-login-subtitle {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.fm-selected-account {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.05);
+  min-height: 58px;
+  font-size: 0.88rem;
+  color: #0f172a;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fm-selected-account-label {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: #2563eb;
+  font-size: 0.7rem;
+}
+
+.fm-selected-account-value {
+  font-weight: 600;
+}
+
+.fm-selected-account-role {
+  color: #475569;
+}
+
+.fm-login-error {
+  border-radius: 12px;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 10px 14px;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.fm-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fm-field-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.fm-input {
+  border-radius: 14px;
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  padding: 14px 16px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fm-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.fm-field-hint {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.fm-login-button {
+  width: 100%;
+  border-radius: 16px;
+  border: none;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fm-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fm-login-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 32px rgba(37, 99, 235, 0.3);
+}
+
+.fm-form-helper {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.fm-accounts-card {
+  background: #fff;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+}
+
+.fm-accounts-header h3 {
+  margin: 6px 0 0;
+  color: #0f172a;
+}
+
+.fm-accounts-tag {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+.fm-accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.fm-accounts-option {
+  border-radius: 18px;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  padding: 14px;
+  text-align: left;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fm-accounts-option--active {
+  border-color: #2563eb;
+  box-shadow: 0 16px 30px rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.fm-accounts-option-heading {
+  margin-bottom: 6px;
+}
+
+.fm-accounts-option-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.fm-accounts-option-role {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #64748b;
+}
+
+.fm-accounts-option-desc {
+  margin: 0;
+  color: #475569;
+  font-size: 0.85rem;
+}
+
+.fm-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.fm-modal-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: clamp(20px, 4vw, 28px);
+  width: min(420px, 100%);
+  box-shadow: 0 28px 46px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fm-modal-title {
+  margin: 0;
+  color: #0f172a;
+}
+
+.fm-modal-subtitle {
+  margin: 0;
+  color: #64748b;
+}
+
+.fm-modal-error {
+  border-radius: 12px;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  padding: 10px 12px;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.fm-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.fm-button-secondary {
+  border-radius: 14px;
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  background: #f8fafc;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.fm-button-secondary:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 1024px) {
+  .fm-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .fm-layout-root {
+    padding: 20px;
+  }
+
+  .fm-layout-grid {
+    gap: 24px;
+  }
+
+  .fm-accounts-grid {
+    grid-template-columns: 1fr;
   }
 }
 
