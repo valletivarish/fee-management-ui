@@ -12,7 +12,7 @@ const RoleLoginPage = () => {
     document.title = `${roleTitle} | ${baseTitle}`
   }, [normalizedRole])
 
-  return <Login />
+  return <Login role={normalizedRole} />
 }
 
 export default RoleLoginPage

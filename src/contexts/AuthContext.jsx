@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+
 import { API_BASE_URL } from '../config';
 
 const AuthContext = createContext();
@@ -13,29 +15,75 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (token) {
-      // Set default authorization header
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Verify token and get user info
-      verifyToken();
     } else {
-      setLoading(false);
+      delete axios.defaults.headers.common['Authorization'];
     }
+    setLoading(false);
   }, [token]);
 
-  const verifyToken = async () => {
+  const applySession = useCallback((accessToken, userInfo) => {
+    setToken(accessToken);
+    localStorage.setItem('token', accessToken);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+    if (userInfo) {
+      setUser(userInfo);
+      localStorage.setItem('user', JSON.stringify(userInfo));
+    } else {
+      setUser(null);
+      localStorage.removeItem('user');
+    }
+  }, []);
+
+  const extractUserInfo = (accessToken, fallbackRole, fallbackUsername) => {
+    if (!accessToken) {
+      return {
+        role: fallbackRole || 'USER',
+        username: fallbackUsername || '',
+      };
+    }
+
     try {
-      // You would typically have an endpoint to verify token and get user info
-      // For now, we'll assume the token is valid if it exists
-      setUser({ role: 'STUDENT', username: 'student@example.com' }); // This should come from API
-      setLoading(false);
+      const decoded = jwtDecode(accessToken) || {};
+      const extractedRole =
+        decoded.role ||
+        decoded.roles ||
+        decoded.authorities ||
+        decoded.scope ||
+        fallbackRole ||
+        'USER';
+
+      const normalizedRole = Array.isArray(extractedRole)
+        ? extractedRole[0]
+        : extractedRole;
+
+      const username =
+        decoded.sub ||
+        decoded.username ||
+        decoded.email ||
+        fallbackUsername ||
+        '';
+
+      return {
+        role: (normalizedRole || '').toString().toUpperCase(),
+        username,
+      };
     } catch (error) {
-      logout();
+      console.warn('Unable to decode JWT for user info; using fallbacks.', error);
+      return {
+        role: fallbackRole || 'USER',
+        username: fallbackUsername || '',
+      };
     }
   };
 
@@ -43,23 +91,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials);
       const { accessToken } = response.data;
-      
-      setToken(accessToken);
-      localStorage.setItem('token', accessToken);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
-      // Get user info (you might need to decode JWT or make another API call)
-      setUser({ role: 'STUDENT', username: credentials.usernameOrEmail });
-      
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
+      const normalizedRole = (credentials.role || '').toString().toUpperCase();
+      const userInfo = extractUserInfo(accessToken, normalizedRole, credentials.usernameOrEmail);
 
-  const register = async (userData) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, userData);
+      applySession(accessToken, userInfo);
+
       return response.data;
     } catch (error) {
       throw error;
@@ -70,6 +106,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     delete axios.defaults.headers.common['Authorization'];
   };
 
@@ -77,9 +114,8 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     login,
-    register,
     logout,
-    loading
+    loading,
   };
 
   return (

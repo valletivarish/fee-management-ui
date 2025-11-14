@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import './App.css';
-import LandingPage from './components/LandingPage';
+import UnifiedLoginPage from './components/UnifiedLoginPage';
 import AdminDashboard, {
   DashboardOverviewScreen,
   StudentsPageScreen,
@@ -13,6 +13,7 @@ import StudentDashboard, { StudentOverviewScreen, StudentFeesScreen, StudentPaym
 import axios from 'axios';
 import { API_BASE_URL } from './config';
 import RoleLoginPage from './components/RoleLoginPage';
+import { useAuth } from './contexts/AuthContext';
 
 // Student Selection Component
 function StudentSelection() {
@@ -20,10 +21,17 @@ function StudentSelection() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { logout, token } = useAuth();
 
   useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (!token && !storedToken) {
+      navigate('/');
+      return;
+    }
     fetchStudents();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, navigate]);
 
   const fetchStudents = async () => {
     try {
@@ -48,6 +56,7 @@ function StudentSelection() {
   };
 
   const handleLogout = () => {
+    logout();
     navigate('/');
   };
 
@@ -108,10 +117,17 @@ function StudentLayoutWrapper() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { logout, token } = useAuth();
 
   useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (!token && !storedToken) {
+      navigate('/');
+      return;
+    }
     fetchStudent();
-  }, [studentId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId, token, navigate]);
 
   const fetchStudent = async () => {
     try {
@@ -126,6 +142,7 @@ function StudentLayoutWrapper() {
   };
 
   const handleLogout = () => {
+    logout();
     navigate('/');
   };
 
@@ -166,8 +183,17 @@ function StudentLayoutWrapper() {
 // Admin Dashboard layout wrapper
 function AdminLayoutWrapper() {
   const navigate = useNavigate();
+  const { logout, token } = useAuth();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (!token && !storedToken) {
+    navigate('/');
+    }
+  }, [token, navigate]);
 
   const handleLogout = () => {
+    logout();
     navigate('/');
   };
 
@@ -189,7 +215,7 @@ function App() {
         </div>
         
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<UnifiedLoginPage />} />
           <Route path="/admin" element={<AdminLayoutWrapper />}>
             <Route index element={<DashboardOverviewScreen />} />
             <Route path="students" element={<StudentsPageScreen />} />

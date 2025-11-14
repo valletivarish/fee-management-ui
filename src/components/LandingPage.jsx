@@ -6,10 +6,13 @@ import { Card, CardContent } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { studentAPI } from '../services/api'
 import axios from 'axios'
-import { API_BASE_URL } from '../config'
+import { API_BASE_URL, DEMO_ADMIN_EMAIL, DEMO_ADMIN_PASSWORD } from '../config'
+import { useAuth } from '../contexts/AuthContext'
 
 const LandingPage = () => {
   const navigate = useNavigate()
+  const { login } = useAuth()
+  const [adminLoggingIn, setAdminLoggingIn] = useState(false)
   const [students, setStudents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -17,8 +20,6 @@ const LandingPage = () => {
   const [demoMode, setDemoMode] = useState(false)
   const [appInfoLoading, setAppInfoLoading] = useState(true)
   const [appInfoError, setAppInfoError] = useState('')
-
-  const activeDemoMode = appInfoLoading ? false : demoMode
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -49,11 +50,18 @@ const LandingPage = () => {
         const response = await axios.get(`${API_BASE_URL}/config/app-info`)
         const { environmentMode: mode, demoMode: isDemo } = response.data || {}
         const normalizedMode = (mode || '').toString().toUpperCase()
+        const demoFlag = Boolean(isDemo)
+
+        localStorage.setItem('app_environment_mode', normalizedMode)
+        localStorage.setItem('app_demo_mode', String(demoFlag))
+
         setEnvironmentMode(normalizedMode)
-        setDemoMode(Boolean(isDemo))
+        setDemoMode(demoFlag)
       } catch (err) {
         console.error('Error fetching app info:', err)
         setAppInfoError('Unable to determine deployment mode.')
+        localStorage.setItem('app_environment_mode', 'DEMO MODE')
+        localStorage.setItem('app_demo_mode', 'true')
         setEnvironmentMode('DEMO MODE')
         setDemoMode(true)
       } finally {
@@ -65,13 +73,14 @@ const LandingPage = () => {
   }, [])
 
   useEffect(() => {
-    if (demoMode) {
-      fetchStudents()
-    } else {
+    if (!demoMode) {
       setStudents([])
       setLoading(false)
       setError('')
+      return
     }
+
+    fetchStudents()
   }, [demoMode])
 
   const fetchStudents = async () => {
@@ -87,11 +96,29 @@ const LandingPage = () => {
     }
   }
 
-  const handleAdminAction = () => {
-    if (activeDemoMode) {
-      navigate('/admin')
-    } else {
+  const handleAdminAction = async () => {
+    if (!demoMode) {
       navigate('/login/admin')
+      return
+    }
+
+    if (adminLoggingIn) {
+      return
+    }
+
+    try {
+      setAdminLoggingIn(true)
+      await login({
+        usernameOrEmail: DEMO_ADMIN_EMAIL,
+        password: DEMO_ADMIN_PASSWORD,
+        role: 'ADMIN'
+      })
+      navigate('/admin')
+    } catch (err) {
+      console.error('Unable to sign in as demo admin', err)
+      setError('Unable to sign in as demo admin. Please try again.')
+    } finally {
+      setAdminLoggingIn(false)
     }
   }
 
@@ -100,10 +127,6 @@ const LandingPage = () => {
       event.preventDefault()
       handleAdminAction()
     }
-  }
-
-  const handleStudentLogin = () => {
-    navigate('/login/student')
   }
 
   useEffect(() => {
@@ -167,8 +190,9 @@ const LandingPage = () => {
                       variant="primary" 
                       size="lg"
                       className="role-button"
+                      disabled={adminLoggingIn}
                     >
-                      {activeDemoMode ? 'Continue as Admin' : 'Admin Login'}
+                      {demoMode ? (adminLoggingIn ? 'Signing in...' : 'Continue as Admin') : 'Admin Login'}
                       <ArrowRight className="button-arrow" />
                     </Button>
                   </CardContent>
@@ -187,13 +211,13 @@ const LandingPage = () => {
                       View your fees, make payments, and track your payment history.
                     </p>
                     
-                    {error && activeDemoMode && (
+                    {error && (
                       <div className="error-message">
                         {error}
                       </div>
                     )}
                     
-                    {activeDemoMode ? (
+                    {demoMode ? (
                       loading ? (
                       <div className="loading-container" role="status" aria-label="Loading students">
                         <div className="loading-spinner"></div>
@@ -233,7 +257,7 @@ const LandingPage = () => {
                           variant="primary" 
                           size="lg"
                           className="role-button"
-                          onClick={handleStudentLogin}
+                          onClick={() => navigate('/login/student')}
                         >
                           Student Login
                           <ArrowRight className="button-arrow" />

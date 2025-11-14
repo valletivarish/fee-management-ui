@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { API_BASE_URL } from '../config';
 
-const Login = () => {
+const Login = ({ role = 'student' }) => {
   const [formData, setFormData] = useState({
     usernameOrEmail: '',
     password: ''
@@ -36,7 +36,7 @@ const Login = () => {
     setError('');
 
     try {
-      await login(formData);
+      await login({ ...formData, role });
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred');
     } finally {
